@@ -2,12 +2,15 @@ import os
 sorted_dictionary = []
 counted_dictionary = []
 current_dir = os.path.dirname(os.path.abspath(__file__))
+counted_word_cache = {}
+scored_word_cache = {}
 
 # wordを読むこむ
 def read_word(word_file):
     word_list = []
     with open(word_file) as f:
-        for line in f:
+        lines = f.readlines()
+        for line in lines:
             line = line.rstrip('\n')
             word_list.append(line)
     return word_list
@@ -51,6 +54,9 @@ def combine_word(word):
 
 # 単語の文字をカウントする
 def count_letter(word):
+    if word in counted_word_cache:
+        return counted_word_cache[word]
+    
     counts = {}
     for char in sorted(word):
         if char.isalpha():
@@ -58,6 +64,8 @@ def count_letter(word):
                 counts[char] += 1
             else:
                 counts[char] = 1
+    # カウントした単語を記録する
+    counted_word_cache[word] = counts
     return counts
 
 # 辞書の単語の文字をカウントする
@@ -70,6 +78,9 @@ def count_dictionary(dictionary):
 
 # 単語のスコアを出す
 def word_score(word):
+    if word in scored_word_cache:
+        return scored_word_cache[word]
+    
     score_table = {
         'a': 1, 'e': 1, 'h': 1, 'i': 1, 'n': 1, 'o': 1, 'r': 1, 's': 1, 't': 1,
         'c': 2, 'd': 2, 'l': 2, 'm': 2, 'u': 2,
@@ -79,6 +90,8 @@ def word_score(word):
     score = 0
     for char in word:
         score += score_table.get(char, 0)
+    # スコアした単語を記録する
+    scored_word_cache[word] = score
     return score
 
 # 最高得点のアナグラム
@@ -136,6 +149,7 @@ def anagram_simple(word, dictionary, sorted_dictionary):
     answer = binary_search_simple(combined_list, sorted_dictionary)
     return answer
 
+
 # 探索_complex
 def search_complex(word, word_counts_list, counted_dictionary):
     answer = []
@@ -188,10 +202,10 @@ def make_answer_file(answer_file, highest_anagram_list):
             f.write(str(word) + '\n')
 
 small_answer = main('./test_case/small.txt')
-make_answer_file('./answer/small_answer', small_answer)
+make_answer_file('./answer/small_answer.txt', small_answer)
 
 # medium_answer = main('./test_case/medium.txt')
-# make_answer_file('./answer/medium_answer')
+# make_answer_file('./answer/medium_answer.txt', medium_answer)
 
 # large_answer = main('./test_case/large.txt')
-# make_answer_file('./answer/large_answer')
+# make_answer_file('./answer/large_answer.txt', large_answer)
