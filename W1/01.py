@@ -34,8 +34,7 @@ def sort(word):
 
 # 辞書を作る
 def make_dictionary():
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    dictionary_path = os.path.join(current_dir, './words.txt')
+    dictionary_path = os.path.join(current_dir, './dictionary/words.txt')
     # 辞書を読み込む
     with open(dictionary_path, 'r') as f:
         dictionary = []
