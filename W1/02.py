@@ -42,15 +42,14 @@ def sort_word_list(word_list):
 
 # 単語の文字の組み合わせ
 def combine_word(word):
-    combined_list = ['']
+    combined_set = set([''])
     for char in sorted(word):
-        tmp_list = []
-        for combined_word in combined_list:
-            tmp_list.append(combined_word + char)
-        combined_list.extend(tmp_list)
-    combined_list = list(set(combined_list))
-    combined_list.remove('')
-    return combined_list
+        tmp_set = set()
+        for combined_word in combined_set:
+            tmp_set.add(combined_word + char)
+        combined_set.update(tmp_set)
+    combined_set.remove('')
+    return list(combined_set)
 
 # 単語の文字をカウントする
 def count_letter(word):
@@ -151,7 +150,7 @@ def anagram_simple(word, dictionary, sorted_dictionary):
 
 
 # 探索_complex
-def search_complex(word, word_counts_list, counted_dictionary):
+def search_complex(word_counts_list, counted_dictionary):
     answer = []
     for dic_counts, dic_word in counted_dictionary:
         if set(dic_counts.keys()).issubset(word_counts_list.keys()):
@@ -170,7 +169,7 @@ def anagram_complex(word, dictionary, counted_dictionary):
     word_counts_list = count_letter(word)
     if counted_dictionary == []:
         counted_dictionary = count_dictionary(dictionary)
-    anagram = search_complex(word, word_counts_list, counted_dictionary)
+    anagram = search_complex(word_counts_list, counted_dictionary)
     return anagram
 
 def main(word_file):
@@ -201,8 +200,8 @@ def make_answer_file(answer_file, highest_anagram_list):
         for word in highest_anagram_list:
             f.write(str(word) + '\n')
 
-small_answer = main('./test_case/small.txt')
-make_answer_file('./answer/small_answer.txt', small_answer)
+# small_answer = main('./test_case/small.txt')
+# make_answer_file('./answer/small_answer.txt', small_answer)
 
 # medium_answer = main('./test_case/medium.txt')
 # make_answer_file('./answer/medium_answer.txt', medium_answer)
