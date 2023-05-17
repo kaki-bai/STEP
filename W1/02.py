@@ -1,6 +1,5 @@
 import os
-sorted_dictionary = []
-counted_dictionary = []
+# counted_dictionary = []
 current_dir = os.path.dirname(os.path.abspath(__file__))
 counted_word_cache = {}
 scored_word_cache = {}
@@ -20,9 +19,10 @@ def make_dictionary():
     current_dir = os.path.dirname(os.path.abspath(__file__))
     dictionary_path = os.path.join(current_dir, './dictionary/words.txt')
     # 辞書を読み込む
+    dictionary = []
     with open(dictionary_path, 'r') as f:
-        dictionary = []
-        for line in f:
+        lines = f.readlines()
+        for line in lines:
             line = line.rstrip('\n')
             dictionary.append(line)
     return dictionary
@@ -138,15 +138,12 @@ def binary_search_simple(word_list, sorted_dictionary):
     return answer
 
 # anagram_simple
-def anagram_simple(word, dictionary, sorted_dictionary):
+def anagram_simple(word, sorted_dictionary):
     combined_list = combine_word(word)
-
-    if sorted_dictionary == []:
-        sorted_dictionary = sort_word_list(dictionary)
-        sorted_dictionary = sorted(sorted_dictionary, key=lambda x: x[0])
-
     answer = binary_search_simple(combined_list, sorted_dictionary)
     return answer
+
+
 
 
 # 探索_complex
@@ -165,25 +162,34 @@ def search_complex(word_counts_list, counted_dictionary):
     return answer
 
 # anagram_complex
-def anagram_complex(word, dictionary, counted_dictionary):
+def anagram_complex(word, counted_dictionary):
     word_counts_list = count_letter(word)
-    if counted_dictionary == []:
-        counted_dictionary = count_dictionary(dictionary)
     anagram = search_complex(word_counts_list, counted_dictionary)
     return anagram
 
 def main(word_file):
     dictionary = make_dictionary()
+    sorted_dictionary = []
+    counted_dictionary = []
+    dic_count = 0
+    
     file_path = os.path.join(current_dir, word_file)
     word_list = read_word(file_path)
 
     anagram = {}
     for item in word_list:
-
+        if len(item) <= 13 and not sorted_dictionary:
+            sorted_dictionary = sort_word_list(dictionary)
+            sorted_dictionary = sorted(sorted_dictionary, key=lambda x: x[0])
+            dic_count += 1
+        elif len(item) > 13 and not counted_dictionary:
+            counted_dictionary = count_dictionary(dictionary)
+            dic_count += 1
+            
         if len(item) <= 13:
-            anagram[item] = anagram_simple(item, dictionary, sorted_dictionary)
+            anagram[item] = anagram_simple(item, sorted_dictionary)
         else:
-            anagram[item] = anagram_complex(item, dictionary, counted_dictionary)
+            anagram[item] = anagram_complex(item, counted_dictionary)
             
         if anagram[item] == []:
             print(f"{item}'s anagram not found.")
@@ -192,6 +198,8 @@ def main(word_file):
     for key, values in anagram.items():
         word = find_highest_score_word(values)
         highest_anagram_list.append(word)
+
+    print(dic_count)
     return highest_anagram_list
 
 def make_answer_file(answer_file, highest_anagram_list):
@@ -200,11 +208,14 @@ def make_answer_file(answer_file, highest_anagram_list):
         for word in highest_anagram_list:
             f.write(str(word) + '\n')
 
+# mini_answer = main('./test_case/mini.txt')
+# make_answer_file('./answer/mini_answer.txt', mini_answer)
+
 # small_answer = main('./test_case/small.txt')
 # make_answer_file('./answer/small_answer.txt', small_answer)
 
 # medium_answer = main('./test_case/medium.txt')
 # make_answer_file('./answer/medium_answer.txt', medium_answer)
 
-# large_answer = main('./test_case/large.txt')
-# make_answer_file('./answer/large_answer.txt', large_answer)
+large_answer = main('./test_case/large.txt')
+make_answer_file('./answer/large_answer.txt', large_answer)
