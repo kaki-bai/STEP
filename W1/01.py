@@ -1,6 +1,6 @@
 import os
 from itertools import permutations
-sorted_dictionary = []
+
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 # input
@@ -116,10 +116,9 @@ def binary_search_complex(word, sorted_word, dictionary):
     return answer
 
 # anagram_complex
-def anagram_complex(word, dictionary, sorted_dictionary):
+def anagram_complex(word, sorted_dictionary):
     sorted_word = sort(word)
-    if sorted_dictionary == []:
-        sorted_dictionary = sort_dictionary(dictionary)
+
     anagram = binary_search_complex(word, sorted_word, sorted_dictionary)
     if anagram:
         print(anagram)
@@ -127,12 +126,18 @@ def anagram_complex(word, dictionary, sorted_dictionary):
         print("No anagram found.")
     return 0
 
-dictionary = make_dictionary()
+def main():
+    dictionary = make_dictionary()
+    sorted_dictionary = []
 
-word_list = input_word()
-for item in word_list:
-    print(f'{item}: ')
-    if len(item) <= 10:
-        anagram_simple(item, dictionary)
-    else:
-        anagram_complex(item, dictionary, sorted_dictionary)
+    word_list = input_word()
+    for item in word_list:
+        print(f'{item}: ')
+        if len(item) > 10 and not sorted_dictionary:
+            sorted_dictionary = sort_dictionary(dictionary)
+        if len(item) <= 10:
+            anagram_simple(item, dictionary)
+        else:
+            anagram_complex(item, sorted_dictionary)
+
+main()
