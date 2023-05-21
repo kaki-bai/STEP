@@ -34,47 +34,38 @@ class Cache:
     # |url|: The accessed URL
     # |contents|: The contents of the URL
     def access_page(self, url, contents):
-        # cache_get = self.cache_table.get(url)
-
-        ### What if url is equal but contents are not?
+        # if the page has been in the cache
         if self.cache_table.get(url)[1]:
             page = self.head
             while page:
-                if page.url == url:
+                if page.url == url and page.contents == contents:
                     self.move_to_top(page)
-                    break
+                    return True
                 page = page.next
-        else:
-            new_page = Page(url, contents)
-            self.cache_table.put(url, contents)
-            self.add_to_top(new_page)
-            if not self.tail:
-                self.tail = new_page
-            if self.cache_table.item_count > self.size:
-                self.tail = self.tail.prev
-                self.tail.next = None
+
+        # if the page has not been in the cache
+        new_page = Page(url, contents)
+        self.cache_table.put(url, contents)
+        self.add_to_top(new_page)
+        # if the cache is empty
+        if not self.tail:
+            self.tail = new_page
+        # if there are more than n(self.size) pages in the cache
+        if self.cache_table.item_count > self.size:
+            self.tail = self.tail.prev
+            self.tail.next = None
 
     # Return the URLs stored in the cache. The URLs are ordered in the order
     # in which the URLs are mostly recently accessed.
     def get_pages(self):
-        #------------------------#
-        # Write your code here!  #
-        #------------------------#
         pages = []
         page = self.head
         while page:
             pages.append(page.url)
             page = page.next
         return pages
-    
-    def get_page_cache(self):
-        pages = []
-        page = self.head
-        while page:
-            pages.append(page)
-            page = page.next
-        return pages
 
+    # add the page to the top
     def add_to_top(self, page):
         page.next = self.head
         page.prev = None
@@ -82,6 +73,7 @@ class Cache:
             self.head.prev = page
         self.head = page
 
+    # remove the page from ordered list
     def delete_page(self, page):
         if page == self.head:
             self.head = page.next
@@ -96,6 +88,7 @@ class Cache:
         if page.prev:
             page.prev.next = page.next
     
+    # move the page to the top
     def move_to_top(self, page):
         if page == self.head:
             return
