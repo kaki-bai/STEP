@@ -27,10 +27,10 @@ def calculate_hash(key):
     # Reason: 1. This function only add up the ASCII values of the keys, which may increase the possibility of collisions
     #         2. This function produces the same hash value every time for the same input string. It may be exploited by an attacker and therefore presents a security risk
     hash = 0
-    prime = 37 # 31 37 41 43
+    num = 128 
     # Improve the collision probability of the original hash function
     for i in range(len(key)):
-        hash += ord(key[i]) * (prime ** i)
+        hash += ord(key[i]) * (num ** i)
     return hash
 
 
@@ -93,7 +93,7 @@ class HashTable:
         return True
     
 
-    # Get an item from the hash table.
+    # Get an item.value from the hash table.
     #
     # |key|: The key.
     # Return value: If the item is found, (the value of the item, True) is

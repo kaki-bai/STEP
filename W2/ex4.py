@@ -36,17 +36,13 @@ class Cache:
     def access_page(self, url, contents):
         # if the page has been in the cache
         if self.cache_table.get(url)[1]:
-            page = self.head
-            while page:
-                if page.url == url and page.contents == contents:
-                    self.move_to_top(page)
-                    return True
-                page = page.next
-
-        # if the page has not been in the cache
+            self.move_to_top(self.cache_table.get(url)[0])
+            return True
+        # if the page is not in the cache
         new_page = Page(url, contents)
-        self.cache_table.put(url, contents)
+        self.cache_table.put(url, new_page)
         self.add_to_top(new_page)
+        
         # if the cache is empty
         if not self.tail:
             self.tail = new_page
