@@ -12,7 +12,8 @@ def calculate_multi_divide(tokens):
   * 算術演算子には優先順位がある
 * 解決方法：
   * 「+」「-」機能を呼び出す前に，「*」「/」機能を先に呼び出す
-
+  
+![IMG_2255](https://github.com/kaki-bai/STEP/assets/107014844/96143cf7-7fa3-450d-bf52-5baa418933ee)
 
 ## 括弧の対応
 ```python
@@ -23,7 +24,8 @@ def calculate_brackets(tokens):
 * 解決方法：
   * 最内層の括弧を見つけて，内側から外側に向かって再帰的に括弧内の値を計算する。
   * スタックを利用して，”(”のindexを記録し，”)”に出会う場合，一番新しい”(”のindexを取り出して，その間の値を計算する。
-
+  
+![IMG_2329](https://github.com/kaki-bai/STEP/assets/107014844/bdafaa31-6dcd-4efa-80e1-4fd0abcbeeec)
 
 ## function (abs, int, round)の追加
 ```python
@@ -35,7 +37,8 @@ def function_round(tokens):
   * functionがどの括弧の中での計算値に対応するかわからない
 * 解決方法：
   * functionにつながる最外層の括弧を見つけて，その中の値を計算する
-		
+  
+![IMG_2257](https://github.com/kaki-bai/STEP/assets/107014844/c35a8b41-55ca-4cb5-9ef2-4ed662f15437)		
 		
 ## functionの実装
 * abs:
