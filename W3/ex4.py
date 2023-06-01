@@ -100,8 +100,7 @@ def calculate_plus_minus(tokens):
             elif tokens[index - 1]['type'] == 'MINUS':
                 answer -= tokens[index]['number']
             else:
-                print('Invalid syntax')
-                exit(1)
+                raise ValueError('Invalid syntax')
         index += 1
     return answer
 
@@ -118,59 +117,53 @@ def calculate_multi_divide(tokens):
             index += 1
 
 def calculate_brackets(tokens):
-    # print('coming')
-    while True:
-        # print(f'brackets:{tokens}')
-        index = 0
-        index_left = -1
-        index_right = -1
-        while index < len(tokens):
-            # print(tokens[index])
-            if tokens[index]['type'] == 'LEFT_BRACKET':
-                index_left = index
-            elif tokens[index]['type'] == 'RIGHT_BRACKET' and index_left != -1:
+    index = 0
+    stack = []
+
+    while index < len(tokens):
+        if tokens[index]['type'] == 'LEFT_BRACKET':
+            stack.append(index)
+        elif tokens[index]['type'] == 'RIGHT_BRACKET':
+            if stack:
+                index_left = stack.pop()
                 index_right = index
-                break
-            index += 1
+                answer_in_brackets = evaluate(tokens[index_left+1:index_right])
+                tokens = tokens[:index_left] + [{'type': 'NUMBER', 'number': answer_in_brackets}]+ tokens[index_right+1:]
+                index = index_left
+                continue
+            else:
+                raise ValueError("Mismatched brackets")
+        index += 1
         
-        if index_left != -1 and index_right != -1:
-            # print(index_left, index_right)
-            answer_in_brackets = evaluate(tokens[index_left+1:index_right])
-            # print(answer_in_brackets)
-            tokens = tokens[:index_left] + [{'type': 'NUMBER', 'number': answer_in_brackets}]+ tokens[index_right+1:]
-            # print(f'brackets:{tokens}')
-        else:
-            break
-        # print(f'brackets:{tokens}')
+    if stack:
+        raise ValueError("Mismatched brackets")
     return tokens
 
 def calculate_function_inside(tokens, index_left):
         index = index_left
-        index_right = -1
-        count_left_bracket = 0
-        count_right_bracket = 0
+        stack = []
 
         if tokens[index]['type'] != 'LEFT_BRACKET':
-            print('Invalid syntax')
-            print(tokens[index])
-            exit(1)
+            raise ValueError("Invalid function")
         else:
+            stack.append(index)
             index += 1
 
         while index < len(tokens):
-            # print(tokens[index])
             if tokens[index]['type'] == 'LEFT_BRACKET':
-                count_left_bracket += 1
+                stack.append(index)
             elif tokens[index]['type'] == 'RIGHT_BRACKET':
-                count_right_bracket += 1
-                if count_right_bracket == count_left_bracket + 1:
+                print('r', index)
+                if stack and len(stack) > 1:
+                    stack.pop()
+                elif len(stack) == 1:
                     index_right = index
                     break
+                else:
+                    raise ValueError("Mismatched brackets")
             index += 1
-        
-            # print(index_left, index_right)
+
         answer_in_brackets = evaluate(tokens[index_left+1:index_right])
-        # print(answer_in_brackets)
         return index_right, answer_in_brackets
 
 def find_function_index(tokens, function_name):
@@ -186,7 +179,6 @@ def find_function_index(tokens, function_name):
 
 def function_abs(tokens):
     while True:
-        # print(f'abs:{tokens}')
         index_left = find_function_index(tokens, 'ABS')
         
         if index_left == -1:
@@ -204,14 +196,12 @@ def function_abs(tokens):
 
 def function_int(tokens):
     while True:
-        # print(f'abs:{tokens}')
         index_left = find_function_index(tokens, 'INT')
         
         if index_left == -1:
             return tokens
         else:
             index_right, answer_in_brackets = calculate_function_inside(tokens, index_left)
-
             answer_int = answer_in_brackets // 1
             
             tokens = tokens[:index_left-1] + [{'type': 'NUMBER', 'number': answer_int}]+ tokens[index_right+1:]
@@ -219,7 +209,6 @@ def function_int(tokens):
 
 def function_round(tokens):
     while True:
-        # print(f'abs:{tokens}')
         index_left = find_function_index(tokens, 'ROUND')
         
         if index_left == -1:
@@ -236,12 +225,10 @@ def function_round(tokens):
             return tokens
 
 def evaluate(tokens):
-    # print(f'main1:{tokens}')
     tokens = function_abs(tokens)
     tokens = function_int(tokens)
     tokens = function_round(tokens)
     tokens = calculate_brackets(tokens)
-    # print(f'main2:{tokens}')
     calculate_multi_divide(tokens)
     answer = calculate_plus_minus(tokens)
     return answer
