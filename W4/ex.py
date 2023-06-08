@@ -2,10 +2,6 @@ import sys
 import collections
 # import os
 
-# current_dir = os.path.dirname(os.path.abspath(__file__))
-# pages_path = os.path.join(current_dir, './wikipedia_dataset/pages_small.txt')
-# links_path = os.path.join(current_dir, './wikipedia_dataset/links_small.txt')
-
 class Wikipedia:
 
     # Initialize the graph of pages.
@@ -134,6 +130,7 @@ class Wikipedia:
         new_page_rank = {}
         zero_page_rank = {}
         no_to_link_index = []
+
         # initialize the page ranks
         for id in self.titles.keys():
             old_page_rank[id] = 1.0
@@ -148,23 +145,25 @@ class Wikipedia:
         while circulation_count < 100:
             page_rank_sum_fifteen = 0
             page_rank_sum_hundred = 0
-            # page_rank_sum = sum(old_page_rank.values())
+
             for from_index, link_array in self.links.items():
                 for to_index in link_array:
                     new_page_rank[to_index] += 0.85 * old_page_rank[from_index] / len(link_array)
+
             for id in self.titles.keys():
                 if id not in no_to_link_index:
                     page_rank_sum_fifteen += old_page_rank[id]
                 else:
                     page_rank_sum_hundred += old_page_rank[id]
+
             for id in self.titles.keys():
                 new_page_rank[id] += (0.15*page_rank_sum_fifteen + page_rank_sum_hundred) / page_num
                 
 
-            if circulation_count > 80:
-                difference = sum(abs(new_page_rank[id] - old_page_rank[id]) for id in old_page_rank.keys())
-                if difference < 0.01:
-                    break
+
+            difference = sum(abs(new_page_rank[id] - old_page_rank[id]) for id in old_page_rank.keys())
+            if difference < 0.01:
+                break
 
             old_page_rank = new_page_rank.copy()
             new_page_rank = zero_page_rank.copy()
