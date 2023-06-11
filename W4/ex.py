@@ -159,8 +159,6 @@ class Wikipedia:
             for id in self.titles.keys():
                 new_page_rank[id] += (0.15*page_rank_sum_fifteen + page_rank_sum_hundred) / page_num
                 
-
-
             difference = sum(abs(new_page_rank[id] - old_page_rank[id]) for id in old_page_rank.keys())
             if difference < 0.01:
                 break
@@ -177,10 +175,9 @@ class Wikipedia:
                 break
         print(circulation_count)
         print(self.titles[max_page_index])
-        # print(old_page_rank)
         return self.titles[max_page_index]
 
-    
+
     def find_most_no_titles(self):
         count_no = {}
         for value in self.titles.values():
@@ -194,7 +191,6 @@ class Wikipedia:
         print()
 
 
-
 if __name__ == "__main__":
     if len(sys.argv) != 3:
         print("usage: %s pages_file links_file" % sys.argv[0])
@@ -206,6 +202,4 @@ if __name__ == "__main__":
     # wikipedia.find_shortest_path("渋谷", "パレートの法則")
     # wikipedia.find_shortest_path("A", "F")
     # wikipedia.find_most_popular_pages()
-    # wikipedia.find_most_no_titles()
-    wikipedia.find_most_popular_pages()
-    
+    wikipedia.find_most_no_titles()

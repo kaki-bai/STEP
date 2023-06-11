@@ -1,0 +1,3 @@
+[submodule "google-step-tsp"]
+	path = google-step-tsp
+	url = https://github.com/kaki-bai/STEP/tree/W5-develop
